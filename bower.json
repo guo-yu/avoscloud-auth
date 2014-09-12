@@ -1,0 +1,31 @@
+{
+  "name": "avoscloud-auth",
+  "version": "0.1.0",
+  "description": "a avoscloud service module based on Angular.js and ngResource.",
+  "authors": [
+    "Guo Yu <o.u.turing@gmail.com>"
+  ],
+  "main": "dist/avoscloud-auth.min.js",
+  "keywords": [
+    "avos",
+    "avoscloud",
+    "avoscloud-auth"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/turingou/avoscloud-auth",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "example/*.js",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.23",
+    "avoscloud": "*"
+  },
+  "devDependencies": {
+    "ionic": "*"
+  }
+}

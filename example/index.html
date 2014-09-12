@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AVOSCloud Auth</title>
+  <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../bower_components/angular-resource/angular-resource.min.js"></script>
+  <script src="../bower_components/avoscloud/dist/avoscloud.min.js"></script>
+  <script src="../src/auth.js"></script>
+</head>
+<body ng-app="app">
+  <div class="signin" ng-controller="avos">
+    <h2>Signin Form</h2>
+    <avoscloud-signin ng-model="user"></avoscloud-signin>
+    <h2>Signin via SMS Form</h2>
+    <avoscloud-signin-sms ng-model="user"></avoscloud-signin-sms>
+    <h2>Signup Form</h2>
+    <avoscloud-signup ng-model="user"></avoscloud-signup>
+  </div>
+  <script>
+    angular
+      .module('app', ['avoscloud-auth'])
+      .controller('avos', function($scope) {
+        
+      });
+  </script>
+</body>
+</html>
