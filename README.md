@@ -22,7 +22,15 @@ this directive will render a form which bind `$scope.user` model.
 Javascript part:
 ```js
 angular
-  .module('app', ['avoscloud','avoscloud-auth']);
+  .module('app', ['avoscloud-auth'])
+  .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
+    auth.signin.on('success', function(user) {
+      console.log(user);
+    });
+    auth.signin.on('error', function(error) {
+      console.log(error);
+    });
+  }]);
 ```
 
 ### Contributing

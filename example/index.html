@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>AVOSCloud Auth</title>
+  <link rel="stylesheet" href="../bower_components/ionic/release/css/ionic.min.css">
+  <script src="../bower_components/debug/dist/debug.js"></script>
   <script src="../bower_components/angular/angular.min.js"></script>
   <script src="../bower_components/angular-resource/angular-resource.min.js"></script>
   <script src="../bower_components/avoscloud/dist/avoscloud.min.js"></script>
@@ -20,9 +22,14 @@
   <script>
     angular
       .module('app', ['avoscloud-auth'])
-      .controller('avos', function($scope) {
-        
-      });
+      .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
+        auth.signin.on('success', function(user) {
+          console.log(user);
+        });
+        auth.signin.on('error', function(error) {
+          console.log(error);
+        });
+      }]);
   </script>
 </body>
 </html>

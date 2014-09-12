@@ -26,6 +26,7 @@
     "avoscloud": "*"
   },
   "devDependencies": {
-    "ionic": "*"
+    "ionic": "*",
+    "debug": "git@github.com:visionmedia/debug.git"
   }
 }

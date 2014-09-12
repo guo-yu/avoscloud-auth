@@ -1,4 +1,4 @@
-;(function(angular) {
+;(function(angular, debug) {
   'use strict';
 
   if (!angular)
@@ -7,11 +7,53 @@
   // Inject as a angular module
   angular
     .module('avoscloud-auth', ['avoscloud'])
-    .directive('avoscloudSignin', ['avoscloud', signIn])
-    .directive('avoscloudSigninSms', ['avoscloud', signInViaSms])
-    .directive('avoscloudSignup', ['avoscloud', signUp])
+    .service('avoscloudAuth', ['', avoscloudAuth])
+    .directive('avoscloudSignin', ['avoscloud', 'avoscloudAuth', signIn])
+    .directive('avoscloudSigninSms', ['avoscloud', 'avoscloudAuth', signInViaSms])
+    .directive('avoscloudSignup', ['avoscloud', 'avoscloudAuth', signUp])
 
-  function signIn(avoscloud) {
+  function avoscloudAuth() {
+    var self = this;
+    this.events = {};
+    this.signin = {};
+    this.signup = {};
+
+    this.on = function(event, fn, type) {
+      var vaild = event && fn && typeof(fn) === 'function';
+      if (!valid) return;
+
+      if (type && !this.events[type])
+        this.events[type] = {};
+      if (type)
+        this.events[type][event] = fn;
+      else 
+        this.events[event] = fn;
+    };
+
+    this.emit = function(event, data, type) {
+      if (type && self[type][event])
+        return self[type][event](data);
+      if (self.events[event])
+        return self.events[event](data);
+      return;
+    }
+
+    // init shortcuts
+    angular.forEach(['signin', 'signup', 'signinSms'], function(item){
+      self[item].on = function(event, fn) {
+        return self.on(event, fn, item);
+      };
+      angular.forEach(['error', 'success'], function(type){
+        self[item][type] = function(data) {
+          if (type === 'error' && typeof(data) === string)
+            data = new Error(data);
+          return self.emit(type, data, item);
+        };
+      });
+    });
+  }
+
+  function signIn(db, auth) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
@@ -27,7 +69,19 @@
       console.log(ctrl);
 
       function signin() {
+        if (!scope.password) 
+          return auth.signin.error('no password');
+        if (!scope.mobilePhoneNumber) 
+          return auth.signin.error('no mobilePhoneNumber');
 
+        db.login.get({
+          password: scope.password,
+          mobilePhoneNumber: scope.mobilePhoneNumber
+        }, function(result) {
+          if (result.sessionToken)
+            db.headers('session', result.sessionToken);
+          return auth.signin.success(result);
+        }, auth.signin.error);
       }
 
       // view => model
@@ -40,7 +94,7 @@
     }
   }
 
-  function signInViaSms(avoscloud) {
+  function signInViaSms(avoscloud, auth) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
@@ -51,14 +105,31 @@
 
     function link(scope, element, attrs, ctrl) {
       scope.signin = signin;
-      
+
+      function requestSmsCode() {
+        if (!scope.mobilePhoneNumber)
+          return auth.signinSms.error('no mobilePhoneNumber');
+
+        db.requestLoginSmsCode.post({
+          mobilePhoneNumber: scope.mobilePhoneNumber
+        }, auth.signinSms.success, auth.signinSms.error);
+      }
+
       function signin() {
-        
+        if (!scope.mobilePhoneNumber) 
+          return auth.signinSms.error('no mobilePhoneNumber');
+        if (!scope.smsCode)
+          return auth.signinSms.error('valid sms code required');
+
+        db.login.get({
+          smsCode: scope.smsCode,
+          mobilePhoneNumber: scope.mobilePhoneNumber
+        }, auth.signinSms.success, auth.signinSms.error);
       }
     }
   }
 
-  function signUp(avoscloud) {
+  function signUp(db, auth) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
@@ -68,7 +139,38 @@
     return directive;
 
     function link(scope, element, attrs, ctrl) {
+      scope.signup = signup;
+      scope.verifyMobilePhone = verifyMobilePhone;
 
+      function signup() {
+        if (!scope.user) 
+          return auth.signup.error('invalid user params');
+        if (!scope.user.username) 
+          return auth.signup.error('invalid user params');
+        if (!scope.user.password) 
+          return auth.signup.error('invalid user params');
+        if (!scope.passwordConfirm) 
+          return auth.signup.error('invalid user params');
+        if (scope.user.password !== scope.passwordConfirm)
+          return auth.signup.error('passwords are not match');
+
+        // use mobile phone number as username
+        scope.user.mobilePhoneNumber = scope.user.username;
+
+        var baby = new db.users(scope.user);
+        baby.$save(auth.signup.success, auth.signup.error);
+      }
+
+      function verifyMobilePhone() {
+        if (!scope.smsCode)
+        return scope.alert('请输入短信验证码!');
+
+        var code = new db.verifyMobilePhone();
+
+        code.$save({
+          code: scope.smsCode
+        }, auth.signup.success, auth.signup.error);
+      }
     }
   }
 
@@ -126,4 +228,8 @@
     return forms[type];
   }
 
-})(window.angular);
+  function errorHandler(type) {
+    return alert(type);
+  }
+
+})(window.angular, window.debug);
