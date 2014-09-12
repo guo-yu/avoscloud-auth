@@ -7,7 +7,7 @@
   // Inject as a angular module
   angular
     .module('avoscloud-auth', ['avoscloud'])
-    .service('avoscloudAuth', ['', avoscloudAuth])
+    .service('avoscloudAuth', avoscloudAuth)
     .directive('avoscloudSignin', ['avoscloud', 'avoscloudAuth', signIn])
     .directive('avoscloudSigninSms', ['avoscloud', 'avoscloudAuth', signInViaSms])
     .directive('avoscloudSignup', ['avoscloud', 'avoscloudAuth', signUp])
@@ -15,11 +15,9 @@
   function avoscloudAuth() {
     var self = this;
     this.events = {};
-    this.signin = {};
-    this.signup = {};
 
     this.on = function(event, fn, type) {
-      var vaild = event && fn && typeof(fn) === 'function';
+      var valid = event && fn && typeof(fn) === 'function';
       if (!valid) return;
 
       if (type && !this.events[type])
@@ -31,8 +29,8 @@
     };
 
     this.emit = function(event, data, type) {
-      if (type && self[type][event])
-        return self[type][event](data);
+      if (type && self.events[type] && self.events[type][event])
+        return self.events[type][event](data);
       if (self.events[event])
         return self.events[event](data);
       return;
@@ -40,12 +38,14 @@
 
     // init shortcuts
     angular.forEach(['signin', 'signup', 'signinSms'], function(item){
+      if (!self[item])
+        self[item] = {};
       self[item].on = function(event, fn) {
         return self.on(event, fn, item);
       };
       angular.forEach(['error', 'success'], function(type){
         self[item][type] = function(data) {
-          if (type === 'error' && typeof(data) === string)
+          if (type === 'error' && typeof(data) === 'string')
             data = new Error(data);
           return self.emit(type, data, item);
         };
@@ -65,8 +65,6 @@
     function link(scope, element, attrs, ctrl) {
       scope.signin = signin;
       scope.updateAccount = updateAccount;
-
-      console.log(ctrl);
 
       function signin() {
         if (!scope.password) 
@@ -104,7 +102,7 @@
     return directive;
 
     function link(scope, element, attrs, ctrl) {
-      scope.signin = signin;
+      scope.signinViaSms = signin;
 
       function requestSmsCode() {
         if (!scope.mobilePhoneNumber)
@@ -210,7 +208,7 @@
     ].join('\n');
 
     forms['signin-sms'] = [
-      '<form id="signinForm" class="signin-form" ng-submit="signin();" novalidate>',
+      '<form id="signinViaSmsForm" class="signin-form signin-via-sms" ng-submit="signinViaSms();" novalidate>',
         '<div class="list">',
           '<label class="item item-input item-stacked-label">',
             '<span class="input-label">手机</span>',
