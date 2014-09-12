@@ -6,7 +6,7 @@
   "scripts": {
     "serve": "node_modules/.bin/serve .",
     "watch": "node_modules/.bin/rewatch src/*.js -c 'npm run build'",
-    "build": "node_modules/.bin/uglifyjs src/avoscloud-auth.js --mangle --compress -o dist/avoscloud-auth.min.js --source-map dist/avoscloud-auth.min.js.map --source-map-url avoscloud-auth.min.js.map --source-map-root ../src/avoscloud-auth.js",
+    "build": "node_modules/.bin/uglifyjs src/auth.js --mangle --compress -o dist/avoscloud-auth.min.js --source-map dist/avoscloud-auth.min.js.map --source-map-url avoscloud-auth.min.js.map --source-map-root ../src/avoscloud-auth.js",
     "dev": "npm run serve & npm run watch"
   },
   "repository": {

@@ -226,8 +226,4 @@
     return forms[type];
   }
 
-  function errorHandler(type) {
-    return alert(type);
-  }
-
 })(window.angular, window.debug);
