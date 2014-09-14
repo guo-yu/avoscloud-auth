@@ -1,5 +1,7 @@
 ## avoscloud-auth
 
+![screenshot](http://ww2.sinaimg.cn/large/61ff0de3gw1ekc3kwvvcxj20gd0ky75c.jpg)
+
 the auth service and directive of avoscloud based on Angular.js and ionic UI.
 
 ### Installation
