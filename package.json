@@ -1,12 +1,12 @@
 {
   "name": "avoscloud-auth",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "the auth service of avoscloud based on Angular.js and ionic UI",
   "main": "index.js",
   "scripts": {
     "serve": "node_modules/.bin/serve .",
     "watch": "node_modules/.bin/rewatch src/*.js -c 'npm run build'",
-    "build": "node_modules/.bin/uglifyjs src/auth.js --mangle --compress -o dist/avoscloud-auth.min.js --source-map dist/avoscloud-auth.min.js.map --source-map-url avoscloud-auth.min.js.map --source-map-root ../src/avoscloud-auth.js",
+    "build": "node_modules/.bin/uglifyjs src/auth.js src/ionic-forms.js src/directives/signin.js src/directives/signup.js --mangle --compress -o dist/avoscloud-auth.min.js --source-map dist/avoscloud-auth.min.js.map --source-map-url avoscloud-auth.min.js.map --source-map-root ../src/avoscloud-auth.js",
     "dev": "npm run serve & npm run watch"
   },
   "repository": {
