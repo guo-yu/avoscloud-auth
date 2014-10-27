@@ -19,18 +19,11 @@
       margin-right: auto;
       margin-top: 50px;
     }
-    h2 {
-      font-size: 16px;
-      margin-bottom: 10px;
-      margin-top: 20px;
-      color: #999;
-    }
   </style>
 </head>
 <body ng-app="app">
   <div id="wrap" class="wrap">
     <div class="signin-2" ng-controller="avos">
-      <h2>Signin via SMS Form</h2>
       <avoscloud-signin-sms ng-model="user"></avoscloud-signin-sms>
     </div>
   </div>
@@ -47,11 +40,11 @@
       }])
       .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
         debug('初始化')
-        auth.signin.on('success', function(user) {
+        auth.signinSms.on('success', function(user) {
           if (user.objectId)
             alert(user.objectId);
         });
-        auth.signin.on('error', function(error) {
+        auth.signinSms.on('error', function(error) {
           alert('出错了: ' + error.data.code + ' : ' + error.data.error)
           debug(error);
         });

@@ -53,7 +53,7 @@
     }
   }
 
-  function signInViaSms(avoscloud, auth, forms) {
+  function signInViaSms(db, auth, forms) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
@@ -71,26 +71,61 @@
         if (scope.waitSms && !scope.smsCode)
           return auth.signinSms.error('smsCode is required');
 
-        db.login.post({
-          mobilePhoneNumber: scope.mobilePhoneNumber
-        }, 
-          function(){
-            // When request sent
+        if (!scope.waitSms) {
+          return requestSmsCode(function(){
             scope.smsSent = true;
-          }, 
+          }, auth.signinSms.error);
+        }
+
+        db.login.post({
+          mobilePhoneNumber: scope.mobilePhoneNumber,
+          smsCode: scope.smsCode
+        }, function(result) {
+          if (result.sessionToken)
+            db.headers('session', result.sessionToken);
+
+          return auth.signinSms.success(result);
+        }, 
           auth.signinSms.error
         );
       }
 
-      function requestSmsCode() {
-        if (!scope.mobilePhoneNumber)
-          return auth.signinSms.error('mobilePhoneNumber is required');
-
+      function requestSmsCode(successCallback, failCallback) {
         db.requestLoginSmsCode.post({
           mobilePhoneNumber: scope.mobilePhoneNumber
+        }, successCallback, failCallback);
+      }
+    }
+  }
+
+  function signinViaMobile(db, auth, forms) {
+    var directive = {
+      restrict: 'AE',
+      require: 'ngModel',
+      template: forms.create('signin-via-mobile'),
+      link: link
+    };
+    return directive;
+
+    function link(scope, element, attrs, ctrl) {
+      scope.signin = signin;
+
+      function signin() {
+        if (!scope.mobilePhoneNumber)
+          return auth.signinViaMobile.error('mobilePhoneNumber is required');
+        if (!scope.password)
+          return auth.signinViaMobile.error('password is required');
+
+        db.login.post({
+          mobilePhoneNumber: scope.mobilePhoneNumber,
+          password: scope.password
+        },function(result) {
+          if (result.sessionToken)
+            db.headers('session', result.sessionToken);
+
+          return auth.signinViaMobile.success(result);
         }, 
-          auth.signinSms.success, 
-          auth.signinSms.error
+          auth.signinViaMobile.error
         );
       }
     }
