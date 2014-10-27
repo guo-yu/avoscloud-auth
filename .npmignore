@@ -6,3 +6,4 @@ thumb
 *.log
 bower_components
 example
+example/configs.js
