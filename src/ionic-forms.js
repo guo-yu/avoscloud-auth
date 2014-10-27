@@ -45,6 +45,7 @@
             '<input type="text" ng-model="smsCode" placeholder="">',
           '</label>',
           '<button class="button button-full button-positive" type="submit">注册</button>',
+          '<button class="button button-full" ng-click="resendCode()" ng-bind="resendCodeText" ng-show="smsSent" ng-disabled="resendCodeDisabled"></button>',
         '</div>',
       '</form>'
     ].join('\n');

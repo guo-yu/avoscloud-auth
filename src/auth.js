@@ -32,8 +32,14 @@
       return;
     }
 
-    // init shortcuts
-    angular.forEach(['signin', 'signup', 'signinSms'], function(item){
+    // Init shortcuts
+    angular.forEach([
+      'signin', 
+      'signup', 
+      'signupSms',
+      'signinSms', 
+      'signinViaMobile'
+    ], function(item){
       if (!self[item])
         self[item] = {};
       self[item].on = function(event, fn) {

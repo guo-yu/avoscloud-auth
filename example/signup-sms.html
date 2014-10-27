@@ -45,13 +45,13 @@
         });
       }])
       .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
-        auth.signup.on('success', function(user) {
+        auth.signupSms.on('success', function(user) {
           debug(user);
           if (user.objectId)
             alert('Create successful: ' + user.objectId);
         });
-        auth.signup.on('error', function(error) {
-          alert(error);
+        auth.signupSms.on('error', function(error) {
+          debug(error);
         });
       }]);
   </script>

@@ -18,13 +18,14 @@
       'avoscloud', 
       'avoscloudAuth', 
       'avoscloud-ionic-form', 
+      '$timeout',
       avoscloudSignupSms
     ])
 
   function signUp(db, auth, forms) {
     var directive = {
       restrict: 'AE',
-      require: 'ngModel',
+      // require: 'ngModel',
       template: forms.create('signup'),
       link: link
     };
@@ -61,10 +62,10 @@
     }
   }
 
-  function avoscloudSignupSms(db, auth, forms) {
+  function avoscloudSignupSms(db, auth, forms, $timeout) {
     var directive = {
       restrict: 'AE',
-      require: 'ngModel',
+      // require: 'ngModel',
       template: forms.create('signup-sms'),
       link: link
     };
@@ -72,7 +73,7 @@
 
      function link(scope, element, attrs, ctrl) {
       scope.signup = signup;
-      scope.verifyMobilePhone = verifyMobilePhone;
+      scope.resendCode = resendCode;
 
       function signup() {
         if (!scope.mobilePhoneNumber)
@@ -88,6 +89,7 @@
         scope.user = {};
         scope.user.username = scope.mobilePhoneNumber;
         scope.user.mobilePhoneNumber = scope.mobilePhoneNumber;
+        scope.user.password = ((new Date()).getTime() + (Math.random() * 10)).toString();
 
         var baby = new db.users(scope.user);
 
@@ -96,11 +98,42 @@
             debug(result);
             scope.smsSent = true;
 
+            countDown(60);
+
             if (result.sessionToken)
               db.headers('session', result.sessionToken);
           }, 
           auth.signupSms.error
         ); 
+      }
+
+      function countDown(num) {
+        if (num === 0) {
+          scope.resendCodeDisabled = false;
+          scope.resendCodeText = '重发验证短信';
+          return;
+        }
+
+        if (!scope.resendCodeDisabled)
+          scope.resendCodeDisabled = true;
+
+        scope.resendCodeText = num;
+        num --;
+
+        $timeout(function(){
+          countDown(num);
+        }, 1000);
+      }
+
+      function resendCode() {
+        db.requestMobilePhoneVerify.post({
+          mobilePhoneNumber: scope.user.mobilePhoneNumber
+        }, function(result){
+          debug(result);
+          countDown(60);
+        }, function(err){
+          debug(err);
+        });
       }
 
       function verifyMobilePhone() {

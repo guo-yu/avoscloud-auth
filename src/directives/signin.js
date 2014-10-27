@@ -19,12 +19,18 @@
       'avoscloudAuth', 
       'avoscloud-ionic-form',
       signInViaSms
+    ])
+    .directive('avoscloudSigninMobile', [
+      'avoscloud', 
+      'avoscloudAuth', 
+      'avoscloud-ionic-form',
+      signinViaMobile
     ]);
 
   function signIn(db, auth, forms) {
     var directive = {
       restrict: 'AE',
-      require: 'ngModel',
+      // require: 'ngModel',
       template: forms.create('signin'),
       link: link
     };
@@ -56,7 +62,7 @@
   function signInViaSms(db, auth, forms) {
     var directive = {
       restrict: 'AE',
-      require: 'ngModel',
+      // require: 'ngModel',
       template: forms.create('signin-sms'),
       link: link
     };
@@ -68,10 +74,10 @@
       function signin() {
         if (!scope.mobilePhoneNumber)
           return auth.signinSms.error('mobilePhoneNumber is required');
-        if (scope.waitSms && !scope.smsCode)
+        if (scope.smsSent && !scope.smsCode)
           return auth.signinSms.error('smsCode is required');
 
-        if (!scope.waitSms) {
+        if (!scope.smsSent) {
           return requestSmsCode(function(){
             scope.smsSent = true;
           }, auth.signinSms.error);
@@ -101,7 +107,7 @@
   function signinViaMobile(db, auth, forms) {
     var directive = {
       restrict: 'AE',
-      require: 'ngModel',
+      // require: 'ngModel',
       template: forms.create('signin-via-mobile'),
       link: link
     };
@@ -119,7 +125,7 @@
         db.login.post({
           mobilePhoneNumber: scope.mobilePhoneNumber,
           password: scope.password
-        },function(result) {
+        }, function(result) {
           if (result.sessionToken)
             db.headers('session', result.sessionToken);
 
