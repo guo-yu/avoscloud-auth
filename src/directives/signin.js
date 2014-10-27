@@ -22,30 +22,21 @@
 
     function link(scope, element, attrs, ctrl) {
       scope.signin = signin;
-      scope.updateAccount = updateAccount;
 
       function signin() {
+        if (!scope.username)
+          return auth.signin.error('username is required');
         if (!scope.password)
-          return auth.signin.error('no password');
-        if (!scope.mobilePhoneNumber)
-          return auth.signin.error('no mobilePhoneNumber');
+          return auth.signin.error('password is required');
 
-        db.login.get({
-          password: scope.password,
-          mobilePhoneNumber: scope.mobilePhoneNumber
+        db.login.post({
+          username: scope.username,
+          password: scope.password
         }, function(result) {
           if (result.sessionToken)
             db.headers('session', result.sessionToken);
           return auth.signin.success(result);
         }, auth.signin.error);
-      }
-
-      // view => model
-      function updateAccount() {
-        ctrl.$setViewValue({
-          username: 'xxx',
-          password: 'xxx'
-        });
       }
     }
   }
@@ -60,15 +51,18 @@
     return directive;
 
     function link(scope, element, attrs, ctrl) {
-      scope.signinViaSms = signin;
+      scope.signin = signin;
 
       function requestSmsCode() {
         if (!scope.mobilePhoneNumber)
-          return auth.signinSms.error('no mobilePhoneNumber');
+          return auth.signinSms.error('mobilePhoneNumber is required');
 
         db.requestLoginSmsCode.post({
           mobilePhoneNumber: scope.mobilePhoneNumber
-        }, auth.signinSms.success, auth.signinSms.error);
+        }, 
+          auth.signinSms.success, 
+          auth.signinSms.error
+        );
       }
 
       function signin() {
@@ -80,7 +74,10 @@
         db.login.get({
           smsCode: scope.smsCode,
           mobilePhoneNumber: scope.mobilePhoneNumber
-        }, auth.signinSms.success, auth.signinSms.error);
+        }, 
+          auth.signinSms.success, 
+          auth.signinSms.error
+        );
       }
     }
   }

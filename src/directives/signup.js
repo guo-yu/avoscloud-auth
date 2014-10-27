@@ -40,11 +40,11 @@
         if (!scope.user)
           return auth.signup.error('invalid user params');
         if (!scope.user.username)
-          return auth.signup.error('invalid user params');
+          return auth.signup.error('invalid username params');
         if (!scope.user.password)
-          return auth.signup.error('invalid user params');
+          return auth.signup.error('invalid password params');
         if (!scope.passwordConfirm)
-          return auth.signup.error('invalid user params');
+          return auth.signup.error('invalid passwordConfirm params');
         if (scope.user.password !== scope.passwordConfirm)
           return auth.signup.error('passwords are not match');
 

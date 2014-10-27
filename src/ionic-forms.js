@@ -70,11 +70,11 @@
     ].join('\n');
 
     forms['signin-sms'] = [
-      '<form id="signinViaSmsForm" class="signin-form signin-via-sms" ng-submit="signinViaSms();" novalidate>',
+      '<form id="signinViaSmsForm" class="signin-form signin-via-sms" ng-submit="signin();" novalidate>',
         '<div class="list">',
           '<label class="item item-input item-stacked-label">',
             '<span class="input-label">手机</span>',
-            '<input type="text" ng-model="user.mobilePhoneNumber" placeholder="137XXXXXXX">',
+            '<input type="text" ng-model="user.mobilePhoneNumber" placeholder="">',
           '</label>',
           '<label class="item item-input item-stacked-label">',
             '<span class="input-label">密码</span>',

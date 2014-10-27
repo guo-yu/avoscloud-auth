@@ -35,6 +35,8 @@
     </div>
   </div>
   <script>
+    var debug = debug('avoscloud:example:signup');
+
     angular
       .module('app', ['avoscloud', 'avoscloud-auth'])
       .config(['avoscloudProvider',function(avoscloudProvider) {
@@ -45,10 +47,12 @@
       }])
       .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
         auth.signup.on('success', function(user) {
-          console.log(user);
+          debug(user);
+          if (user.objectId)
+            alert('Create successful: ' + user.objectId);
         });
         auth.signup.on('error', function(error) {
-          console.log(error);
+          alert(error);
         });
       }]);
   </script>

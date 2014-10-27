@@ -32,19 +32,37 @@
     <div class="signin" ng-controller="avos">
       <h2>Signin Form</h2>
       <avoscloud-signin ng-model="user"></avoscloud-signin>
+    </div>
+    <div class="signin-2" ng-controller="avos2">
       <h2>Signin via SMS Form</h2>
-      <avoscloud-signin-sms ng-model="user"></avoscloud-signin-sms>
+      <avoscloud-signin-sms ng-model="user2"></avoscloud-signin-sms>
     </div>
   </div>
   <script>
+    var debug = debug('avoscloud:example:signin');
+
     angular
-      .module('app', ['avoscloud-auth'])
+      .module('app', ['avoscloud', 'avoscloud-auth'])
+      .config(['avoscloudProvider',function(avoscloudProvider) {
+        avoscloudProvider.config({
+          appId: configs.appId,
+          appKey: configs.appKey
+        });
+      }])
       .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
         auth.signin.on('success', function(user) {
-          console.log(user);
+          debug(user);
         });
         auth.signin.on('error', function(error) {
-          console.log(error);
+          alert(error);
+        });
+      }])
+      .controller('avos2', ['$scope', 'avoscloudAuth', function($scope, auth) {
+        auth.signin.on('success', function(user) {
+          debug(user);
+        });
+        auth.signin.on('error', function(error) {
+          alert(error);
         });
       }]);
   </script>
