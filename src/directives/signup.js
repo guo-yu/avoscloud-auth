@@ -95,11 +95,14 @@
         if (scope.user.password !== scope.passwordConfirm)
           return auth.signup.error('passwords are not match');
 
-        // Use mobile phone number as username
-        scope.user.username = scope.user.mobilePhoneNumber;
+        scope.user.mobilePhoneNumber = scope.user.username;
 
         var baby = new db.users(scope.user);
-        baby.$save(auth.signup.success, auth.signup.error); 
+        
+        baby.$save(
+          auth.signup.success, 
+          auth.signup.error
+        ); 
       }
 
       function verifyMobilePhone() {

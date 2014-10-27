@@ -29,9 +29,9 @@
 </head>
 <body ng-app="app">
   <div id="wrap" class="wrap">
-    <div class="signin" ng-controller="avos">
-      <h2>Signin Form</h2>
-      <avoscloud-signin ng-model="user"></avoscloud-signin>
+    <div class="signin-2" ng-controller="avos">
+      <h2>Signin via SMS Form</h2>
+      <avoscloud-signin-sms ng-model="user"></avoscloud-signin-sms>
     </div>
   </div>
   <script>
@@ -46,6 +46,7 @@
         });
       }])
       .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
+        debug('初始化')
         auth.signin.on('success', function(user) {
           if (user.objectId)
             alert(user.objectId);
@@ -54,7 +55,7 @@
           alert('出错了: ' + error.data.code + ' : ' + error.data.error)
           debug(error);
         });
-      }])
+      }]);
   </script>
 </body>
 </html>

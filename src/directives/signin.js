@@ -8,8 +8,18 @@
 
   angular
     .module('avoscloud-auth')
-    .directive('avoscloudSignin', ['avoscloud', 'avoscloudAuth', 'avoscloud-ionic-form', signIn])
-    .directive('avoscloudSigninSms', ['avoscloud', 'avoscloudAuth', 'avoscloud-ionic-form',signInViaSms]);
+    .directive('avoscloudSignin', [
+      'avoscloud', 
+      'avoscloudAuth', 
+      'avoscloud-ionic-form', 
+      signIn
+    ])
+    .directive('avoscloudSigninSms', [
+      'avoscloud', 
+      'avoscloudAuth', 
+      'avoscloud-ionic-form',
+      signInViaSms
+    ]);
 
   function signIn(db, auth, forms) {
     var directive = {
@@ -24,19 +34,21 @@
       scope.signin = signin;
 
       function signin() {
-        if (!scope.username)
+        if (!scope.user)
           return auth.signin.error('username is required');
-        if (!scope.password)
+        if (!scope.user.username)
+          return auth.signin.error('username is required');
+        if (!scope.user.password)
           return auth.signin.error('password is required');
 
-        db.login.post({
-          username: scope.username,
-          password: scope.password
-        }, function(result) {
+        db.login.post(scope.user, function(result) {
           if (result.sessionToken)
             db.headers('session', result.sessionToken);
+
           return auth.signin.success(result);
-        }, auth.signin.error);
+        }, 
+          auth.signin.error
+        );
       }
     }
   }
@@ -53,26 +65,28 @@
     function link(scope, element, attrs, ctrl) {
       scope.signin = signin;
 
+      function signin() {
+        if (!scope.mobilePhoneNumber)
+          return auth.signinSms.error('mobilePhoneNumber is required');
+        if (scope.waitSms && !scope.smsCode)
+          return auth.signinSms.error('smsCode is required');
+
+        db.login.post({
+          mobilePhoneNumber: scope.mobilePhoneNumber
+        }, 
+          function(){
+            // When request sent
+            scope.smsSent = true;
+          }, 
+          auth.signinSms.error
+        );
+      }
+
       function requestSmsCode() {
         if (!scope.mobilePhoneNumber)
           return auth.signinSms.error('mobilePhoneNumber is required');
 
         db.requestLoginSmsCode.post({
-          mobilePhoneNumber: scope.mobilePhoneNumber
-        }, 
-          auth.signinSms.success, 
-          auth.signinSms.error
-        );
-      }
-
-      function signin() {
-        if (!scope.mobilePhoneNumber)
-          return auth.signinSms.error('no mobilePhoneNumber');
-        if (!scope.smsCode)
-          return auth.signinSms.error('valid sms code required');
-
-        db.login.get({
-          smsCode: scope.smsCode,
           mobilePhoneNumber: scope.mobilePhoneNumber
         }, 
           auth.signinSms.success, 
