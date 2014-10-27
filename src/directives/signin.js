@@ -4,6 +4,8 @@
   if (!angular)
     throw new Error('avoscloudAuth.init(); angular.js required.');
 
+  var debug = debug('avoscloud:signin');
+
   angular
     .module('avoscloud-auth')
     .directive('avoscloudSignin', ['avoscloud', 'avoscloudAuth', 'avoscloud-ionic-form', signIn])

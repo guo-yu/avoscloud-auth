@@ -4,7 +4,7 @@
   if (!angular)
     throw new Error('avoscloudAuth.init(); angular.js required.');
 
-  var debug = debug('signup');
+  var debug = debug('avoscloud:signup');
 
   angular
     .module('avoscloud-auth')
@@ -24,7 +24,7 @@
       scope.verifyMobilePhone = verifyMobilePhone;
 
       function signup() {
-        debug(scope.user);
+        debug(scope);
 
         if (!scope.user)
           return auth.signup.error('invalid user params');
