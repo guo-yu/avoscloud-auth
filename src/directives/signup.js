@@ -14,11 +14,11 @@
       'avoscloud-ionic-form', 
       signUp
     ])
-    .directive('avoscloudSignupByMobilephone', [
+    .directive('avoscloudSignupSms', [
       'avoscloud', 
       'avoscloudAuth', 
       'avoscloud-ionic-form', 
-      avoscloudSignupByMobilephone
+      avoscloudSignupSms
     ])
 
   function signUp(db, auth, forms) {
@@ -32,7 +32,6 @@
 
     function link(scope, element, attrs, ctrl) {
       scope.signup = signup;
-      scope.verifyMobilePhone = verifyMobilePhone;
 
       function signup() {
         debug(scope);
@@ -49,30 +48,24 @@
           return auth.signup.error('passwords are not match');
 
         var baby = new db.users(scope.user);
-        baby.$save(auth.signup.success, auth.signup.error);
-      }
+        baby.$save(
+          function(result) {
+            if (result.sessionToken)
+              db.headers('session', result.sessionToken);
 
-      function verifyMobilePhone() {
-        if (!scope.smsCode)
-          return scope.alert('请输入短信验证码!');
-
-        var code = new db.verifyMobilePhone();
-
-        code.$save({
-          code: scope.smsCode
-        }, 
-          auth.signup.success, 
+            return auth.signup.success(result);
+          }, 
           auth.signup.error
         );
       }
     }
   }
 
-  function avoscloudSignupByMobilephone(db, auth, forms) {
+  function avoscloudSignupSms(db, auth, forms) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
-      template: forms.create('signup'),
+      template: forms.create('signup-sms'),
       link: link
     };
     return directive;
@@ -82,40 +75,42 @@
       scope.verifyMobilePhone = verifyMobilePhone;
 
       function signup() {
-        debug(scope);
+        if (!scope.mobilePhoneNumber)
+          return auth.signupSms.error('invalid mobilePhoneNumber');
 
-        if (!scope.user)
-          return auth.signup.error('invalid user params');
-        if (!scope.user.mobilePhoneNumber)
-          return auth.signup.error('invalid mobilePhoneNumber');
-        if (!scope.user.password)
-          return auth.signup.error('invalid user params');
-        if (!scope.passwordConfirm)
-          return auth.signup.error('invalid user params');
-        if (scope.user.password !== scope.passwordConfirm)
-          return auth.signup.error('passwords are not match');
+        if (scope.smsSent) {
+          if (!scope.smsCode)
+            return auth.signupSms.error('invalid smsCode');
 
-        scope.user.mobilePhoneNumber = scope.user.username;
+          return verifyMobilePhone();
+        }
+
+        scope.user = {};
+        scope.user.username = scope.mobilePhoneNumber;
+        scope.user.mobilePhoneNumber = scope.mobilePhoneNumber;
 
         var baby = new db.users(scope.user);
-        
+
         baby.$save(
-          auth.signup.success, 
-          auth.signup.error
+          function(result) {
+            debug(result);
+            scope.smsSent = true;
+
+            if (result.sessionToken)
+              db.headers('session', result.sessionToken);
+          }, 
+          auth.signupSms.error
         ); 
       }
 
       function verifyMobilePhone() {
-        if (!scope.smsCode)
-          return scope.alert('请输入短信验证码!');
-
         var code = new db.verifyMobilePhone();
 
         code.$save({
           code: scope.smsCode
         }, 
-          auth.signup.success, 
-          auth.signup.error
+          auth.signupSms.success, 
+          auth.signupSms.error
         );
       }
     }

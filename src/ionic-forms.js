@@ -38,7 +38,7 @@
         '<div class="list">',
           '<label class="item item-input item-stacked-label">',
             '<span class="input-label">手机</span>',
-            '<input type="text" ng-model="user.username" placeholder="">',
+            '<input type="text" ng-model="mobilePhoneNumber" placeholder="">',
           '</label>',
           '<label class="item item-input item-stacked-label" ng-show="smsSent">',
             '<span class="input-label">验证码</span>',

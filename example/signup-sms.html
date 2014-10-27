@@ -30,11 +30,11 @@
 <body ng-app="app">
   <div id="wrap" class="wrap">
     <div class="signup" ng-controller="avos">
-      <avoscloud-signup ng-model="user"></avoscloud-signup>
+      <avoscloud-signup-sms></avoscloud-signup-sms>
     </div>
   </div>
   <script>
-    var debug = debug('avoscloud:example:signup');
+    var debug = debug('avoscloud:example:signup-sms');
 
     angular
       .module('app', ['avoscloud', 'avoscloud-auth'])
