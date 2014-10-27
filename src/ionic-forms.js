@@ -13,7 +13,7 @@
   function ionicForms() {
     var forms = {};
 
-    forms.signup = forms.signup = [
+    forms.signup = [
       '<form id="signupForm" class="signup-form" ng-submit="signup();" novalidate>',
         '<div class="list">',
           '<label class="item item-input item-stacked-label">',
@@ -34,7 +34,7 @@
     ].join('\n');
 
     forms.signupByMobilePhone = [
-      '<form id="signupForm" class="signup-form" ng-submit="signup();" novalidate>',
+      '<form id="signupForm" class="signup-form" ng-submit="signupByMobilePhone();" novalidate>',
         '<div class="list">',
           '<label class="item item-input item-stacked-label">',
             '<span class="input-label">手机</span>',
