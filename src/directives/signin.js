@@ -6,14 +6,14 @@
 
   angular
     .module('avoscloud-auth')
-    .directive('avoscloudSignin', ['avoscloud', 'avoscloud-ionic-form', 'avoscloudAuth', signIn])
-    .directive('avoscloudSigninSms', ['avoscloud', 'avoscloud-ionic-form', 'avoscloudAuth', signInViaSms]);
+    .directive('avoscloudSignin', ['avoscloud', 'avoscloudAuth', 'avoscloud-ionic-form', signIn])
+    .directive('avoscloudSigninSms', ['avoscloud', 'avoscloudAuth', 'avoscloud-ionic-form',signInViaSms]);
 
-  function signIn(db, auth) {
+  function signIn(db, auth, forms) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
-      template: createForm('signin'),
+      template: forms.create('signin'),
       link: link
     };
     return directive;
@@ -48,11 +48,11 @@
     }
   }
 
-  function signInViaSms(avoscloud, auth) {
+  function signInViaSms(avoscloud, auth, forms) {
     var directive = {
       restrict: 'AE',
       require: 'ngModel',
-      template: createForm('signin-sms'),
+      template: forms.create('signin-sms'),
       link: link
     };
     return directive;

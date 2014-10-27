@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AVOSCloud Auth</title>
+  <link rel="stylesheet" href="../bower_components/ionic/release/css/ionic.min.css">
+  <script src="../bower_components/debug/dist/debug.js"></script>
+  <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../bower_components/angular-resource/angular-resource.min.js"></script>
+  <script src="../bower_components/avoscloud/dist/avoscloud.min.js"></script>
+  <script src="../src/auth.js"></script>
+  <script src="../src/ionic-forms.js"></script>
+  <script src="../src/directives/signin.js"></script>
+  <style>
+    .wrap {
+      width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 50px;
+    }
+    h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      margin-top: 20px;
+      color: #999;
+    }
+  </style>
+</head>
+<body ng-app="app">
+  <div id="wrap" class="wrap">
+    <div class="signin" ng-controller="avos">
+      <h2>Signin Form</h2>
+      <avoscloud-signin ng-model="user"></avoscloud-signin>
+      <h2>Signin via SMS Form</h2>
+      <avoscloud-signin-sms ng-model="user"></avoscloud-signin-sms>
+    </div>
+  </div>
+  <script>
+    angular
+      .module('app', ['avoscloud-auth'])
+      .controller('avos', ['$scope', 'avoscloudAuth', function($scope, auth) {
+        $scope.user = {
+          username: '请输入用户名',
+          password: '123123'
+        }
+        auth.signin.on('success', function(user) {
+          console.log(user);
+        });
+        auth.signin.on('error', function(error) {
+          console.log(error);
+        });
+      }]);
+  </script>
+</body>
+</html>

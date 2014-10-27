@@ -4,6 +4,8 @@
   if (!angular)
     throw new Error('avoscloudAuth.init(); angular.js required.');
 
+  var debug = debug('signup');
+
   angular
     .module('avoscloud-auth')
     .directive('avoscloudSignup', ['avoscloud', 'avoscloudAuth', 'avoscloud-ionic-form', signUp])
@@ -22,6 +24,8 @@
       scope.verifyMobilePhone = verifyMobilePhone;
 
       function signup() {
+        debug(scope.user);
+
         if (!scope.user)
           return auth.signup.error('invalid user params');
         if (!scope.user.username)
@@ -33,7 +37,7 @@
         if (scope.user.password !== scope.passwordConfirm)
           return auth.signup.error('passwords are not match');
 
-        // use mobile phone number as username
+        // Use mobile phone number as username
         scope.user.mobilePhoneNumber = scope.user.username;
 
         var baby = new db.users(scope.user);
@@ -48,7 +52,10 @@
 
         code.$save({
           code: scope.smsCode
-        }, auth.signup.success, auth.signup.error);
+        }, 
+          auth.signup.success, 
+          auth.signup.error
+        );
       }
     }
   }
